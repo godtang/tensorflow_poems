@@ -100,7 +100,8 @@ class fillPoem(threading.Thread):  # 继承父类threading.Thread
                             word = to_word(predict, vocabularies)
 
                         poem = pretty_print_poem(poem_)
-                        poemList.append(poem)
+                        if "" != poem:
+                            poemList.append(poem)
                     finally:
                         mutex.release()
                 else:
