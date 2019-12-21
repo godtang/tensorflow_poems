@@ -79,8 +79,8 @@ class fillPoem(threading.Thread):  # 继承父类threading.Thread
             x = np.array([list(map(word_int_map.get, start_token))])
             while True:
                 if 100 > len(poemList):
+                    lock = False
                     try:
-                        mutex.acquire()
                         [predict, last_state] = sess.run([end_points['prediction'], end_points['last_state']],
                                                          feed_dict={input_data: x})
                         word = begin_word or to_word(predict, vocabularies)
@@ -100,10 +100,13 @@ class fillPoem(threading.Thread):  # 继承父类threading.Thread
                             word = to_word(predict, vocabularies)
 
                         poem = pretty_print_poem(poem_)
-                        if "" != poem:
+                        if "" != poem and "                                         。" != poem :
+                            lock = True
+                            mutex.acquire()
                             poemList.append(poem)
                     finally:
-                        mutex.release()
+                        if lock:
+                            mutex.release()
                 else:
                     time.sleep(1)
 
